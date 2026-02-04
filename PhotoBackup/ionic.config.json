@@ -1,0 +1,7 @@
+{
+  "name": "PhotoBackup",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
