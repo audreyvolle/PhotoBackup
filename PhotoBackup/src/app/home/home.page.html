@@ -13,18 +13,16 @@
     </ion-toolbar>
   </ion-header>
 
-
-  <div class="photosToBackup">
+  <div class="backedUp">
     {{ backedUpPhotos.value()?.count ?? 0 }} Photos Backed Up
-    {{ photosToBackUp()?.length ?? 0 }} to backup
+  </div>
+  <div class="photosToBackup">
+    {{ photosToBackUp()?.length ?? 0 }} to Backup
   </div>
 
   <div class="backup">
-    <ion-button (click)="backup()">
-
+    <ion-button (click)="backup()" [disabled]="!photosToBackUp()?.length">
+      Backup {{ photosToBackUp()?.length }} Photos
     </ion-button>
   </div>
-
-
-
 </ion-content>

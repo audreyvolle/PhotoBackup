@@ -33,15 +33,14 @@ export class HomePage {
   });
 
   async backup() {
-    console.log("upload")
-    console.log(this.photoLibraryIdentifiers.value());
-    console.log(this.photosToBackUp());
-
     const pending = this.photosToBackUp();
     if (pending.length === 0) return;
 
     try {
-      await this.backupService.uploadPhotos(pending);
+      await this.displayService.loader({
+        loadingMessage: "Backing Up Photos",
+        promise: this.backupService.uploadPhotos(pending)
+      })
       this.backedUpPhotos.reload();
     } catch (e) {
       this.displayService.presentToast("Upload Failed", Colors.Danger);
