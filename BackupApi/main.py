@@ -13,7 +13,7 @@ from pydantic import BaseModel
 # --------------------
 # CONFIG
 # --------------------
-DATA_DIR = "./Users/audryvolle/Documents/Photos/"
+DATA_DIR = "./Photos"
 DB_PATH = "./users.db" 
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "CHANGE_ME")
@@ -27,9 +27,15 @@ os.makedirs(DATA_DIR, exist_ok=True)
 # --------------------
 app = FastAPI(title="Photo Backup API")
 
+origins = [
+    "capacitor://localhost",
+    "http://localhost",
+    "http://localhost:8100"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -165,12 +171,16 @@ def upload_photo(
 ):
     require_token(authorization)
 
-    final_path = photo_path_from_hash(hash, timestamp)
+    try:
+        final_path = photo_path_from_hash(hash, timestamp)
 
-    if os.path.exists(final_path):
-        return {"status": "exists"}
+        if os.path.exists(final_path):
+            return {"status": "exists"}
 
-    with open(final_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+        with open(final_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
 
-    return {"status": "ok"}
+        return {"status": "ok"}
+    except Exception as e:
+        print(f"ERROR: {e}")
+        return JSONResponse(status_code=500, content={"message": str(e)})

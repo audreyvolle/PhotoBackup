@@ -12,4 +12,19 @@
       <ion-title size="large">Backup Photos</ion-title>
     </ion-toolbar>
   </ion-header>
+
+
+  <div class="photosToBackup">
+    {{ backedUpPhotos.value()?.count ?? 0 }} Photos Backed Up
+    {{ photosToBackUp()?.length ?? 0 }} to backup
+  </div>
+
+  <div class="backup">
+    <ion-button (click)="backup()">
+
+    </ion-button>
+  </div>
+
+
+
 </ion-content>

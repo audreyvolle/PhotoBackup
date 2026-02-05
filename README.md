@@ -40,7 +40,7 @@ ipconfig getifaddr en0
 #### Windows
 ```
 ipconfig
-``
+```
 
 URL to use in the app example
 http://192.168.1.42:3000

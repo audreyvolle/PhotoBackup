@@ -14,16 +14,16 @@
   </ion-header>
 
   <div id="container">
-    <form [formGroup]="loginForm">
+    <form [formGroup]="loginForm" (ngSubmit)="submit()">
       <ion-input label="Server Destination" mode="md" fill="solid" type="email" formControlName="server"
         placeholder="https://mycomputer"></ion-input>
       <ion-input label="Username" mode="md" label-placement="floating" fill="solid" type="email"
         formControlName="username"></ion-input>
       <ion-input label="Password" mode="md" label-placement="floating" fill="solid" type="password" name="password"
         autocomplete="current-password" formControlName="password" />
-
-        <!--Button to submit-->
-        <!--Need Help? Link to README-->
+      <ion-button expand="block" type="submit" id="login" [disabled]="!loginForm.valid">Continue</ion-button>
+      <!--Button to submit-->
+      <!--Need Help? Link to README https://github.com/audreyvolle/PhotoBackup/tree/main?tab=readme-ov-file#photobackup-->
     </form>
   </div>
 </ion-content>
