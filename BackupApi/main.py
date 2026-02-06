@@ -9,6 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from pydantic import BaseModel
+from dotenv import load_dotenv
+load_dotenv()
 
 # --------------------
 # CONFIG
@@ -22,9 +24,6 @@ TOKEN_EXPIRE_HOURS = 24
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
-# --------------------
-# APP
-# --------------------
 app = FastAPI(title="Photo Backup API")
 
 origins = [
@@ -42,6 +41,8 @@ app.add_middleware(
 )
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+
+
 
 # --------------------
 # DATABASE

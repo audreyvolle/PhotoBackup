@@ -10,37 +10,20 @@ How to use:
 
 
 
-## API
-
-pip3 install fastapi uvicorn python-jose python-multipart argon2-cffi
-
-### Running Instructions
-Make sure the photos path (DATA_DIR) is set to where you would like to store your backed up photos
-
-Create Secret Key
+### API
+First time running API:
+- Must have python installed
+- create .env file with two variables:
 ```
-export SECRET_KEY="super-secret-random-string"
-```
-Run
-```
-uvicorn main:app --host 0.0.0.0 --port 3000
+SECRET_KEY=change-this-to-a-long-random-string
+PORT=3000
 ```
 
-### Add a one time user
-curl -X POST http://localhost:3000/auth/create-user \
-  -H "Content-Type: application/json" \
-  -d '{"username":"audrey","password":"strongpassword"}'
-
-### Get IP address for app server url (Running application and server on same network)
-#### macOS / Linux
+Run API:
 ```
-ipconfig getifaddr en0
+./run.sh
 ```
 
-#### Windows
-```
-ipconfig
-```
+If this is your first time running the API, you will be prompted to create a user and password to be used in the application.
 
-URL to use in the app example
-http://192.168.1.42:3000
+Once that has successfully been completed, the ip and port will log, which will need to be inputted into the application's server input

@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+python-jose
+python-multipart
+passlib[argon2]
+argon2-cffi
