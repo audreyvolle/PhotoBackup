@@ -9,6 +9,10 @@ export interface BackedUpPhotos {
     count: number;
 }
 
+export function extractGuid(identifier: string): string {
+  return identifier.split('/')[0];
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -37,12 +41,13 @@ export class BackupService {
                 const blob = await response.blob();
                 const formData = new FormData();
                 formData.append('file', blob, `${photo.identifier}.jpg`);
+                console.log(extractGuid(photo.identifier))
 
                 return await firstValueFrom(
                     this.httpClient.post(`${userInfo.server}/photos/upload`, formData, {
                         headers: {
                             'Authorization': `Bearer ${userInfo.token}`,
-                            'hash': photo.identifier,
+                            'hash': extractGuid(photo.identifier),
                             'timestamp': photo.creationDate || new Date().toISOString()
                         }
                     })

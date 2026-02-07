@@ -1,28 +1,36 @@
 import os
 import sqlite3
 import shutil
+import re
 from datetime import datetime, timedelta
 from typing import List
-
+from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from pydantic import BaseModel
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 load_dotenv()
 
 # --------------------
 # CONFIG
 # --------------------
-DATA_DIR = "./Photos"
 DB_PATH = "./users.db" 
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "CHANGE_ME")
 ALGORITHM = "HS256"
 TOKEN_EXPIRE_HOURS = 24
 
-os.makedirs(DATA_DIR, exist_ok=True)
+PHOTO_ROOT = os.getenv("PHOTO_STORAGE_PATH")
+
+if not PHOTO_ROOT:
+    raise RuntimeError("PHOTO_STORAGE_PATH is not set in .env")
+
+PHOTO_ROOT = os.path.abspath(PHOTO_ROOT)
+
+os.makedirs(PHOTO_ROOT, exist_ok=True)
 
 app = FastAPI(title="Photo Backup API")
 
@@ -79,14 +87,15 @@ def create_token(username: str) -> str:
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-def require_token(authorization: str | None):
+def require_token(authorization: str | None) -> str:
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing token")
 
     token = authorization.split(" ")[1]
 
     try:
-        jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload["sub"]
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
@@ -138,24 +147,43 @@ def health():
 # --------------------
 # PHOTO HELPERS
 # --------------------
-def photo_path_from_hash(hash: str, timestamp: str):
-    year = timestamp[:4]
-    month = timestamp[5:7]
-    dir_path = f"{DATA_DIR}/{year}/{month}"
-    os.makedirs(dir_path, exist_ok=True)
-    return f"{dir_path}/{hash}.jpg"
+def photo_path_from_hash(username: str, photo_id: str, timestamp: str, ext: str) -> Path:
+    try:
+        dt = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid timestamp")
+
+    year = f"{dt.year:04d}"
+
+    base = user_photo_root(username)
+    year_dir = base / year
+    year_dir.mkdir(parents=True, exist_ok=True)
+
+    return year_dir / f"{photo_id}{ext}"
+
+def user_photo_root(username: str) -> Path:
+    safe = "".join(c for c in username if c.isalnum() or c in ("-", "_"))
+    path = Path(PHOTO_ROOT) / safe
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+def safe_identifier(identifier: str) -> str:
+    return re.sub(r"[^a-zA-Z0-9_-]", "_", identifier)
 
 # --------------------
 # PHOTO ENDPOINTS
 # --------------------
 @app.get("/photos/identifiers")
 def list_identifiers(authorization: str = Header(None)):
-    require_token(authorization)
+    username = require_token(authorization)
+    root = user_photo_root(username)
 
     identifiers = []
 
-    for root, _, files in os.walk(DATA_DIR):
+    for _, _, files in os.walk(root):
         for f in files:
+            if f.startswith("."):
+                continue
             identifiers.append(os.path.splitext(f)[0])
 
     return {
@@ -170,10 +198,18 @@ def upload_photo(
     timestamp: str = Header(...),
     authorization: str = Header(None)
 ):
-    require_token(authorization)
+    username = require_token(authorization)
+
+    ext = os.path.splitext(file.filename)[1] or ".jpg"
 
     try:
-        final_path = photo_path_from_hash(hash, timestamp)
+        photo_id = safe_identifier(hash.lower())
+        final_path = photo_path_from_hash(
+            username=username,
+            photo_id=photo_id,
+            timestamp=timestamp,
+            ext=ext
+        )
 
         if os.path.exists(final_path):
             return {"status": "exists"}

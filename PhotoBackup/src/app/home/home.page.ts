@@ -1,6 +1,6 @@
 import { Component, computed, inject, resource } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton } from '@ionic/angular/standalone';
-import { BackupService } from '../shared/services/backup.service';
+import { BackupService, extractGuid } from '../shared/services/backup.service';
 import { Colors, DisplayService } from '../shared/services/display.service';
 import { Media } from '@capacitor-community/media';
 
@@ -29,7 +29,7 @@ export class HomePage {
   photosToBackUp = computed(() => {
     const local = this.photoLibraryIdentifiers.value()?.medias ?? [];
     const remote = this.backedUpPhotos.value()?.identifiers ?? [];
-    return local.filter(l => !remote.includes(l.identifier));
+    return local.filter(l => !remote.includes(extractGuid(l.identifier)));
   });
 
   async backup() {
