@@ -20,9 +20,16 @@ PORT=3000
 ```
 
 Run API:
+
+mac/linux
 ```
 ./run.sh
 ```
+windows
+```
+.\run.ps1
+```
+
 
 If this is your first time running the API, you will be prompted to create a user and password to be used in the application.
 
