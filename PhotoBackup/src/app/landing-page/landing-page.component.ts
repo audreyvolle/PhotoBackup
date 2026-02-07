@@ -25,16 +25,16 @@ export class LandingPage {
 
   constructor() {
     Preferences.get({ key: 'username' }).then(user => {
-      if (user.value) {
-        this.loginForm.patchValue({ username: user.value })
-      }
+      if (user.value) this.loginForm.patchValue({ username: user.value });
     });
 
     Preferences.get({ key: 'server' }).then(server => {
-      if (server.value) {
-        this.loginForm.patchValue({ server: server.value })
-      }
+      if (server.value) this.loginForm.patchValue({ server: server.value });
     });
+  }
+
+  openHelp() {
+    window.open("https://github.com/audreyvolle/PhotoBackup?tab=readme-ov-file#how-to-use")
   }
 
   async submit() {
@@ -54,7 +54,6 @@ export class LandingPage {
       this.router.navigateRoot(['/home']);
     } catch (error) {
       this.displayService.presentToast("Error Logging In", Colors.Danger, error);
-      console.error(error);
     }
   }
 }

@@ -28,8 +28,8 @@ export class HomePage {
 
   photosToBackUp = computed(() => {
     const local = this.photoLibraryIdentifiers.value()?.medias ?? [];
-    const remote = this.backedUpPhotos.value()?.identifiers ?? [];
-    return local.filter(l => !remote.includes(extractGuid(l.identifier)));
+    const remote = this.backedUpPhotos.value()?.identifiers.map(id => id.toLowerCase()) ?? [];
+    return local.filter(l => !remote.includes(extractGuid(l.identifier.toLowerCase())));
   });
 
   async backup() {
@@ -42,6 +42,7 @@ export class HomePage {
         promise: this.backupService.uploadPhotos(pending)
       })
       this.backedUpPhotos.reload();
+      this.photoLibraryIdentifiers.reload();
     } catch (e) {
       this.displayService.presentToast("Upload Failed", Colors.Danger);
     }
