@@ -57,6 +57,7 @@ export class DisplayService {
       console.error(options.error);
       message += `: ${options.error?.message?.slice(0, 200)}`;
     }
+
     const toast = await this.toastController.create({
       message,
       duration: options.duration ?? 5000,
@@ -64,12 +65,7 @@ export class DisplayService {
       position: "bottom",
       cssClass: "toast",
       color: options.color,
-      buttons: options.buttons ?? [
-        {
-          text: "OK",
-          role: "cancel",
-        },
-      ],
+      buttons: options.buttons ?? [{text: "OK", role: "cancel" }],
     });
     await toast.present();
   }

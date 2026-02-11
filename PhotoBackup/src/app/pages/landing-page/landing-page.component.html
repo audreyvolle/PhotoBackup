@@ -5,7 +5,7 @@
 </ion-header>
 <ion-content [fullscreen]="true">
   <div class="flex items-center justify-center h-full px-4">
-    <div class="w-full max-w-md bg-white rounded-xl shadow-md p-6 space-y-6">
+    <div class="w-full max-w-md rounded-xl shadow-md p-6 space-y-6">
       <h2 class="text-2xl font-semibold text-center">Connect to Server</h2>
       <form [formGroup]="loginForm" (ngSubmit)="submit()" class="space-y-4">
         <ion-input label="Server Destination" label-placement="floating" fill="solid" type="url"

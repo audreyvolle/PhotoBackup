@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './shared/guards/auth.guard';
 import { TabsComponent } from './pages/tabs/tabs.component';
+import { redirectGuard } from './shared/guards/redirect.guard';
 
 export const routes: Routes = [
   {
@@ -30,7 +31,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'landing-page',
+    canActivate: [authGuard, redirectGuard],
     pathMatch: 'full',
   },
 ];

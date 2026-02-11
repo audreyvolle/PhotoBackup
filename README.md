@@ -1,6 +1,6 @@
-# PhotoBackup
+# MyCloud
 
-"MyCloud" - A free ICloud replacement. Control where you store your photos.
+Free ICloud replacement
 
 ## How to use
 App and API must be run on devices using the same network.
