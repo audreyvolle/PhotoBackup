@@ -1,0 +1,20 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Backup Photos</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <div class="flex flex-col items-center justify-center h-full px-6 text-center gap-6">
+    <div class="text-2xl font-semibold">
+      {{ backedUpPhotos.value()?.count ?? 0 }}
+      <span class="block text-sm text-gray-500">Photos Backed Up</span>
+    </div>
+    <div class="text-xl font-medium text-orange-600">
+      {{ photosToBackUp()?.length ?? 0 }}
+      <span class="block text-sm text-gray-500">To Backup</span>
+    </div>
+    <ion-button class="w-full max-w-sm" (click)="backup()" [disabled]="!photosToBackUp()?.length">
+      Backup {{ photosToBackUp()?.length }} Photos
+    </ion-button>
+  </div>
+</ion-content>

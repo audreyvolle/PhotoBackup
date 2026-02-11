@@ -1,0 +1,26 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <div class="flex items-center justify-center h-full px-4">
+    <div class="w-full max-w-md bg-white rounded-xl shadow-md p-6 space-y-6">
+      <h2 class="text-2xl font-semibold text-center">Connect to Server</h2>
+      <form [formGroup]="loginForm" (ngSubmit)="submit()" class="space-y-4">
+        <ion-input label="Server Destination" label-placement="floating" fill="solid" type="url"
+         formControlName="server" placeholder="https://0.0.0.0:5000"></ion-input>
+        <ion-input label="Username" label-placement="floating" fill="solid" type="email"
+          formControlName="username"></ion-input>
+        <ion-input label="Password" label-placement="floating" fill="solid" type="password"
+          autocomplete="current-password" formControlName="password"></ion-input>
+        <ion-button expand="block" type="submit" [disabled]="!loginForm.valid">
+          Continue
+        </ion-button>
+        <ion-button fill="clear" size="small" class="w-full text-center" (click)="openHelp()">
+          Need Help?
+        </ion-button>
+      </form>
+    </div>
+  </div>
+</ion-content>

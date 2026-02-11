@@ -3,6 +3,7 @@ import { inject, Injectable } from "@angular/core";
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { Preferences } from "@capacitor/preferences";
 import { firstValueFrom } from "rxjs";
+import { PreferencesKeys } from "../models/preferences.model";
 
 export interface LoginInfo {
     username: string;
@@ -34,7 +35,7 @@ export class LoginService {
     async loadToken(): Promise<void> {
         if (this.cachedToken) return;
 
-        const { value } = await Preferences.get({ key: 'token' });
+        const { value } = await Preferences.get({ key: PreferencesKeys.Token });
         this.cachedToken = value;
     }
 
@@ -48,20 +49,14 @@ export class LoginService {
 
     async logout(): Promise<void> {
         this.cachedToken = null;
-        await Preferences.remove({ key: 'token' });
+        await Preferences.remove({ key: PreferencesKeys.Token });
     }
 
     async getUserInfo(): Promise<UserInfo> {
         const [token, server, username] = await Promise.all([
-            Preferences.get({
-                key: 'token'
-            }),
-            Preferences.get({
-                key: 'server'
-            }),
-            Preferences.get({
-                key: 'username'
-            })]);
+            Preferences.get({ key: PreferencesKeys.Token }),
+            Preferences.get({ key: PreferencesKeys.Server }),
+            Preferences.get({ key: PreferencesKeys.Username })]);
 
         return {
             token: token.value!,
@@ -72,15 +67,15 @@ export class LoginService {
 
     private async setPreferences(info: UserInfo) {
         await Preferences.set({
-            key: 'token',
+            key: PreferencesKeys.Token,
             value: info.token,
         });
         await Preferences.set({
-            key: 'server',
+            key: PreferencesKeys.Server,
             value: info.server,
         });
         await Preferences.set({
-            key: 'username',
+            key: PreferencesKeys.Username,
             value: info.username,
         });
     }

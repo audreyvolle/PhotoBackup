@@ -1,13 +1,12 @@
 import { Component, computed, inject, resource } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton } from '@ionic/angular/standalone';
-import { BackupService, extractGuid } from '../shared/services/backup.service';
-import { Colors, DisplayService } from '../shared/services/display.service';
 import { Media } from '@capacitor-community/media';
+import { BackupService, extractGuid } from 'src/app/shared/services/backup.service';
+import { Colors, DisplayService } from 'src/app/shared/services/display.service';
 
 @Component({
   selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  templateUrl: 'home.component.html',
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton],
 })
 export class HomePage {
@@ -16,7 +15,7 @@ export class HomePage {
 
   backedUpPhotos = resource({
     loader: async () => this.backupService.getBackedUpIdentifiers().catch(error =>
-      this.displayService.presentToast("Error Fetching Photos", Colors.Danger, error))
+      this.displayService.presentToast({message: "Error Fetching Photos", color: Colors.Danger, error}))
   });
 
   photoLibraryIdentifiers = resource({
@@ -43,8 +42,8 @@ export class HomePage {
       })
       this.backedUpPhotos.reload();
       this.photoLibraryIdentifiers.reload();
-    } catch (e) {
-      this.displayService.presentToast("Upload Failed", Colors.Danger);
+    } catch (error) {
+      this.displayService.presentToast({message: "Upload Failed", color: Colors.Danger, error});
     }
   }
 }

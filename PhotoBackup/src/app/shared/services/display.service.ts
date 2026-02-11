@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { LoadingController, ToastController, ToastButton } from "@ionic/angular/standalone";
+import { LoadingController, ToastController, ToastButton, ToastOptions } from "@ionic/angular/standalone";
 
 export enum Colors {
   Dark = "dark",
@@ -8,6 +8,10 @@ export enum Colors {
   Success = "success",
   Danger = "danger",
   Light = "light"
+}
+
+export interface MoreTostOptions extends ToastOptions {
+  error?: any;
 }
 
 @Injectable({
@@ -46,28 +50,26 @@ export class DisplayService {
     }
   }
 
-  async presentToast(displayMessage: string = 'Error...', color: Colors | undefined = undefined, error?: any, duration: number = 5000, buttons?: ToastButton[], icon: string | undefined = undefined) {
-    let message = displayMessage;
-    if (error) {
+  async presentToast(options: MoreTostOptions): Promise<void> {
+    let message = options.message;
+    if (options.error) {
       // eslint-disable-next-line no-console
-      console.error(error);
-      message += `: ${error?.message?.slice(0, 200)}`;
+      console.error(options.error);
+      message += `: ${options.error?.message?.slice(0, 200)}`;
     }
-
     const toast = await this.toastController.create({
       message,
-      duration,
-      icon,
+      duration: options.duration ?? 5000,
+      icon: options.icon,
       position: "bottom",
       cssClass: "toast",
-      color,
-      buttons: buttons ?? [
+      color: options.color,
+      buttons: options.buttons ?? [
         {
           text: "OK",
           role: "cancel",
         },
       ],
-      id: "toast-message",
     });
     await toast.present();
   }
