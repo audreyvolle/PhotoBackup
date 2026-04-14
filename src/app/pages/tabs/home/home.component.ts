@@ -20,8 +20,13 @@ export class HomePage {
 
   photoLibraryIdentifiers = resource({
     loader: async () => {
-      const allPhotos = await Media.getMedias().catch() ?? [];
-      return allPhotos;
+      let quantity = 5000;
+      let result = await Media.getMedias({ quantity }).catch() ?? { medias: [] };
+      while (result.medias.length >= quantity) {
+        quantity *= 2;
+        result = await Media.getMedias({ quantity }).catch() ?? { medias: [] };
+      }
+      return result;
     }
   });
 
